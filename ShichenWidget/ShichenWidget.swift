@@ -54,9 +54,9 @@ struct ShichenWidgetEntryView: View {
             Text(s.range).font(.caption2).foregroundStyle(.secondary)
             Spacer(minLength: 2)
             Label(s.good, systemImage: "checkmark.circle")
-                .font(.caption2).lineLimit(2).foregroundStyle(.primary)
+                .font(.footnote).lineLimit(2).foregroundStyle(.primary)
             Label(s.bad, systemImage: "xmark.circle")
-                .font(.caption2).lineLimit(1).foregroundStyle(.secondary)
+                .font(.footnote).lineLimit(1).foregroundStyle(.secondary)
         }
         .padding(4)
     }
@@ -69,13 +69,13 @@ struct ShichenWidgetEntryView: View {
                 Text(s.range).font(.caption2).foregroundStyle(.secondary)
             }
             Divider()
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 6) {
-                    Text(s.meridian).font(.headline).foregroundStyle(accent)
-                    Text("· \(s.organ)").font(.subheadline).foregroundStyle(.secondary)
+                    Text(s.meridian).font(.title3).bold().foregroundStyle(accent)
+                    Text("· \(s.organ)").font(.body).foregroundStyle(.secondary)
                 }
-                Label(s.good, systemImage: "checkmark.circle").font(.footnote).lineLimit(2)
-                Label(s.bad, systemImage: "xmark.circle").font(.footnote)
+                Label(s.good, systemImage: "checkmark.circle").font(.callout).lineLimit(2)
+                Label(s.bad, systemImage: "xmark.circle").font(.callout)
                     .foregroundStyle(.secondary).lineLimit(2)
             }
             Spacer(minLength: 0)

@@ -22,6 +22,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         false
     }
+
+    // 点 Dock 图标时打开面板。
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        statusController.openPanel()
+        return true
+    }
 }
 
 struct ContentView: View {

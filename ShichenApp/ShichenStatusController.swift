@@ -58,7 +58,8 @@ final class ShichenStatusController: NSObject, NSWindowDelegate {
         open.target = self
         menu.addItem(open)
 
-        let login = NSMenuItem(title: "开机时启动", action: #selector(toggleLaunchAtLogin), keyEquivalent: "")
+        let login = NSMenuItem(title: launchAtLoginEnabled ? "取消开机启动" : "开机时启动",
+                               action: #selector(toggleLaunchAtLogin), keyEquivalent: "")
         login.target = self
         login.state = launchAtLoginEnabled ? .on : .off
         menu.addItem(login)
@@ -78,7 +79,7 @@ final class ShichenStatusController: NSObject, NSWindowDelegate {
 
     // MARK: - 面板窗口(AppKit 自管,避免 SwiftUI WindowGroup 重开崩溃)
 
-    @objc private func openPanel() {
+    @objc func openPanel() {
         NSApp.activate(ignoringOtherApps: true)
 
         if let panel = panel {
@@ -124,6 +125,8 @@ final class ShichenStatusController: NSObject, NSWindowDelegate {
             alert.informativeText = error.localizedDescription
             alert.runModal()
         }
+        // 立即重建菜单,让开关文字/勾选状态反映最新结果。
+        statusItem.menu = buildMenu(for: MeridianData.current())
     }
 }
 
