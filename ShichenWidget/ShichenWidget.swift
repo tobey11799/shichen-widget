@@ -54,9 +54,9 @@ struct ShichenWidgetEntryView: View {
             Text(s.range).font(.caption2).foregroundStyle(.secondary)
             Spacer(minLength: 2)
             Label(s.good, systemImage: "checkmark.circle")
-                .font(.caption2).lineLimit(2).foregroundStyle(.primary)
+                .font(.footnote).lineLimit(2).foregroundStyle(.primary)
             Label(s.bad, systemImage: "xmark.circle")
-                .font(.caption2).lineLimit(1).foregroundStyle(.secondary)
+                .font(.footnote).lineLimit(1).foregroundStyle(.secondary)
         }
         .padding(4)
     }
@@ -65,22 +65,37 @@ struct ShichenWidgetEntryView: View {
         let s = entry.shichen
         return HStack(spacing: 14) {
             VStack(spacing: 2) {
-                Text(s.name).font(.system(size: 34, weight: .bold))
-                Text(s.range).font(.caption2).foregroundStyle(.secondary)
+                Text(s.name).font(.system(size: 40, weight: .bold))
+                Text(s.range).font(.footnote).foregroundStyle(.secondary)
             }
             Divider()
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 6) {
-                    Text(s.meridian).font(.headline).foregroundStyle(accent)
-                    Text("· \(s.organ)").font(.subheadline).foregroundStyle(.secondary)
+                    Text(s.meridian).font(.system(size: 24, weight: .bold)).foregroundStyle(accent)
+                    Text("· \(s.organ)").font(.title3).foregroundStyle(.secondary)
                 }
-                Label(s.good, systemImage: "checkmark.circle").font(.footnote).lineLimit(2)
-                Label(s.bad, systemImage: "xmark.circle").font(.footnote)
-                    .foregroundStyle(.secondary).lineLimit(2)
+                Spacer(minLength: 0)
+                adviceRow(icon: "checkmark.circle", text: s.good, secondary: false)
+                adviceRow(icon: "xmark.circle", text: s.bad, secondary: true)
+                Spacer(minLength: 0)
             }
-            Spacer(minLength: 0)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         }
-        .padding(4)
+        .padding(6)
+    }
+
+    /// 宜/忌一行:图标顶对齐,文字自动换行(最多两行)。
+    private func adviceRow(icon: String, text: String, secondary: Bool) -> some View {
+        HStack(alignment: .top, spacing: 5) {
+            Image(systemName: icon).font(.system(size: 15))
+            Text(text)
+                .font(.system(size: 16))
+                .lineLimit(2)
+                .minimumScaleFactor(0.7)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .foregroundStyle(secondary ? AnyShapeStyle(.secondary) : AnyShapeStyle(.primary))
     }
 }
 
