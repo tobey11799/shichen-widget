@@ -76,6 +76,10 @@ final class ShichenStatusController: NSObject {
 final class DockTileView: NSView {
     var shichen: Shichen = MeridianData.current() { didSet { needsDisplay = true } }
 
+    convenience init() {
+        self.init(frame: NSRect(x: 0, y: 0, width: 128, height: 128))
+    }
+
     override func draw(_ dirtyRect: NSRect) {
         let r = bounds
 
