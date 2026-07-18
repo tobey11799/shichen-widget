@@ -31,6 +31,7 @@ final class ShichenStatusController: NSObject, NSWindowDelegate {
     private let dockTileView = DockTileView()
     private var timer: Timer?
     private var panel: NSWindow?
+    private var lastShownId: Int?
 
     private let titleStyleKey = "menuBarTitleStyle"
     private var titleStyle: TitleStyle {
@@ -46,12 +47,31 @@ final class ShichenStatusController: NSObject, NSWindowDelegate {
             titleStyle = .full
         }
         refresh()
+
+        // 睡眠唤醒后补刷(合盖跨时辰时,一次性 timer 可能不触发)。
+        NSWorkspace.shared.notificationCenter.addObserver(
+            self, selector: #selector(refreshIfNeeded),
+            name: NSWorkspace.didWakeNotification, object: nil)
+
+        // 每 30s 轮询,仅当时辰变化才重建,避免依赖单个边界 timer。
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
+            self?.refreshIfNeeded()
+        }
     }
 
     // MARK: - 刷新
 
+    /// 仅当当前时辰与上次显示不同才刷新(轮询/唤醒都走这里)。
+    @objc private func refreshIfNeeded() {
+        if MeridianData.current().id != lastShownId {
+            refresh()
+        }
+    }
+
     private func refresh() {
         let s = MeridianData.current()
+        lastShownId = s.id
 
         // 菜单栏:按配置的详略程度静态显示,不跑马灯。
         statusItem.button?.title = titleStyle.title(for: s)
@@ -61,16 +81,6 @@ final class ShichenStatusController: NSObject, NSWindowDelegate {
         dockTileView.shichen = s
         NSApp.dockTile.contentView = dockTileView
         NSApp.dockTile.display()
-
-        scheduleNext()
-    }
-
-    private func scheduleNext() {
-        timer?.invalidate()
-        let interval = max(1, MeridianData.nextBoundary().timeIntervalSinceNow)
-        timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { [weak self] _ in
-            self?.refresh()
-        }
     }
 
     // MARK: - 菜单
