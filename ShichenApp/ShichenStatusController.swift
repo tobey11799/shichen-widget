@@ -20,8 +20,8 @@ final class ShichenStatusController: NSObject, NSWindowDelegate {
     private func refresh() {
         let s = MeridianData.current()
 
-        // 菜单栏:静态显示「时辰·经络」,不跑马灯。
-        statusItem.button?.title = " \(s.name)·\(s.meridian)"
+        // 菜单栏:静态显示「时辰·经络 宜:… 忌:…」,不跑马灯。
+        statusItem.button?.title = " \(s.name)·\(s.meridian)　宜:\(s.good)　忌:\(s.bad)"
         statusItem.menu = buildMenu(for: s)
 
         // Dock 图标自绘。
