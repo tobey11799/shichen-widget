@@ -67,4 +67,19 @@ enum MeridianData {
         if base <= date { return calendar.date(byAdding: .day, value: 1, to: base) ?? base }
         return base
     }
+
+    /// 从给定时刻起,未来若干个时辰的 (起始时刻, 时辰)。
+    /// 首项是当前时辰(date 本身),其后每项是各时辰边界。用于 WidgetKit 一次性预生成
+    /// 足够覆盖一整天的时间线,避免依赖系统频繁回调 getTimeline。
+    static func upcoming(from date: Date = Date(), calendar: Calendar = .current,
+                         count: Int = 14) -> [(date: Date, shichen: Shichen)] {
+        var result: [(Date, Shichen)] = [(date, current(at: date, calendar: calendar))]
+        var cursor = date
+        for _ in 0..<count {
+            let b = nextBoundary(after: cursor, calendar: calendar)
+            result.append((b, current(at: b, calendar: calendar)))
+            cursor = b
+        }
+        return result
+    }
 }

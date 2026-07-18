@@ -18,11 +18,11 @@ struct ShichenProvider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<ShichenEntry>) -> Void) {
-        let now = Date()
-        let entry = ShichenEntry(date: now, shichen: MeridianData.current(at: now))
-        // 下个时辰开始时刷新。
-        let refresh = MeridianData.nextBoundary(after: now)
-        completion(Timeline(entries: [entry], policy: .after(refresh)))
+        // 一次性预生成未来 ~28h 的全部时辰 entries,widget 到点自动翻页,
+        // 不依赖系统频繁回调;末尾再请求刷新。
+        let entries = MeridianData.upcoming(count: 14)
+            .map { ShichenEntry(date: $0.date, shichen: $0.shichen) }
+        completion(Timeline(entries: entries, policy: .atEnd))
     }
 }
 
@@ -45,18 +45,19 @@ struct ShichenWidgetEntryView: View {
 
     private var smallView: some View {
         let s = entry.shichen
-        return VStack(alignment: .leading, spacing: 4) {
+        return VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .firstTextBaseline) {
                 Text(s.name).font(.title2).bold()
                 Spacer()
                 Text(s.meridian).font(.headline).foregroundStyle(accent)
             }
-            Text(s.range).font(.caption2).foregroundStyle(.secondary)
-            Spacer(minLength: 2)
+            Text("\(s.range)　·　\(s.organ)").font(.caption2).foregroundStyle(.secondary)
+            Divider()
             Label(s.good, systemImage: "checkmark.circle")
                 .font(.footnote).lineLimit(2).foregroundStyle(.primary)
             Label(s.bad, systemImage: "xmark.circle")
-                .font(.footnote).lineLimit(1).foregroundStyle(.secondary)
+                .font(.footnote).lineLimit(2).foregroundStyle(.secondary)
+            Spacer(minLength: 0)
         }
         .padding(4)
     }

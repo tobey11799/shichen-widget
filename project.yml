@@ -5,6 +5,12 @@ options:
     macOS: "14.0"
   createIntermediateGroups: true
 
+# 本地签名配置(DEVELOPMENT_TEAM)从 gitignore 的 Signing.xcconfig 读取,
+# 不进公开仓库。首次使用:cp Signing.xcconfig.example Signing.xcconfig 并填入自己的 Team。
+configFiles:
+  Debug: Signing.xcconfig
+  Release: Signing.xcconfig
+
 targets:
   # 宿主 App
   ShichenApp:
