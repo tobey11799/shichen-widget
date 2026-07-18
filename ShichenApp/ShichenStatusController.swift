@@ -2,6 +2,29 @@ import AppKit
 import SwiftUI
 import ServiceManagement
 
+/// 菜单栏标题的详略程度。
+enum TitleStyle: Int, CaseIterable {
+    case short = 0   // 时辰·经络
+    case medium      // 时辰·经络 宜:…
+    case full        // 时辰·经络 宜:… 忌:…
+
+    var label: String {
+        switch self {
+        case .short:  return "简(仅时辰·经络)"
+        case .medium: return "中(带宜)"
+        case .full:   return "详(带宜和忌)"
+        }
+    }
+
+    func title(for s: Shichen) -> String {
+        switch self {
+        case .short:  return " \(s.name)·\(s.meridian)"
+        case .medium: return " \(s.name)·\(s.meridian)　宜:\(s.good)"
+        case .full:   return " \(s.name)·\(s.meridian)　宜:\(s.good)　忌:\(s.bad)"
+        }
+    }
+}
+
 /// 负责菜单栏(静态,不滚动)、Dock 图标与面板窗口的当前时辰展示。
 final class ShichenStatusController: NSObject, NSWindowDelegate {
     private var statusItem: NSStatusItem!
@@ -9,9 +32,19 @@ final class ShichenStatusController: NSObject, NSWindowDelegate {
     private var timer: Timer?
     private var panel: NSWindow?
 
+    private let titleStyleKey = "menuBarTitleStyle"
+    private var titleStyle: TitleStyle {
+        get { TitleStyle(rawValue: UserDefaults.standard.integer(forKey: titleStyleKey)) ?? .full }
+        set { UserDefaults.standard.set(newValue.rawValue, forKey: titleStyleKey) }
+    }
+
     func start() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         NSApp.dockTile.contentView = dockTileView
+        // 首次运行默认「详」。
+        if UserDefaults.standard.object(forKey: titleStyleKey) == nil {
+            titleStyle = .full
+        }
         refresh()
     }
 
@@ -20,8 +53,8 @@ final class ShichenStatusController: NSObject, NSWindowDelegate {
     private func refresh() {
         let s = MeridianData.current()
 
-        // 菜单栏:静态显示「时辰·经络 宜:… 忌:…」,不跑马灯。
-        statusItem.button?.title = " \(s.name)·\(s.meridian)　宜:\(s.good)　忌:\(s.bad)"
+        // 菜单栏:按配置的详略程度静态显示,不跑马灯。
+        statusItem.button?.title = titleStyle.title(for: s)
         statusItem.menu = buildMenu(for: s)
 
         // Dock 图标自绘。
@@ -57,6 +90,20 @@ final class ShichenStatusController: NSObject, NSWindowDelegate {
         let open = NSMenuItem(title: "打开面板", action: #selector(openPanel), keyEquivalent: "")
         open.target = self
         menu.addItem(open)
+
+        // 菜单栏显示详略,可配置。
+        let styleItem = NSMenuItem(title: "菜单栏显示", action: nil, keyEquivalent: "")
+        let styleMenu = NSMenu()
+        for style in TitleStyle.allCases {
+            let item = NSMenuItem(title: style.label,
+                                  action: #selector(selectTitleStyle(_:)), keyEquivalent: "")
+            item.target = self
+            item.tag = style.rawValue
+            item.state = (style == titleStyle) ? .on : .off
+            styleMenu.addItem(item)
+        }
+        styleItem.submenu = styleMenu
+        menu.addItem(styleItem)
 
         let login = NSMenuItem(title: launchAtLoginEnabled ? "取消开机启动" : "开机时启动",
                                action: #selector(toggleLaunchAtLogin), keyEquivalent: "")
@@ -110,6 +157,12 @@ final class ShichenStatusController: NSObject, NSWindowDelegate {
 
     private var launchAtLoginEnabled: Bool {
         SMAppService.mainApp.status == .enabled
+    }
+
+    @objc private func selectTitleStyle(_ sender: NSMenuItem) {
+        guard let style = TitleStyle(rawValue: sender.tag) else { return }
+        titleStyle = style
+        refresh()   // 立即套用新标题并重建菜单(勾选跟着变)。
     }
 
     @objc private func toggleLaunchAtLogin() {
