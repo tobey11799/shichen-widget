@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8">
+<title>时辰经络养生 Widget 预览</title>
+<style>
+  :root{ --accent:#8c2926; }
+  *{box-sizing:border-box;}
+  body{margin:0;padding:40px;background:#e9e4da;
+    font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;color:#1c1c1e;}
+  h1{font-size:17px;font-weight:600;color:#555;margin:0 0 20px;}
+  .row{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start;margin-bottom:36px;}
+  .cap{font-size:12px;color:#888;margin-top:8px;text-align:center;}
+  .widget{background:#fff;border-radius:20px;
+    box-shadow:0 8px 24px rgba(0,0,0,.12);padding:16px;}
+  /* small 155x155 */
+  .small{width:155px;height:155px;display:flex;flex-direction:column;}
+  .small .top{display:flex;justify-content:space-between;align-items:baseline;}
+  .small .name{font-size:22px;font-weight:700;}
+  .small .mer{font-size:15px;font-weight:600;color:var(--accent);}
+  .small .range{font-size:11px;color:#8e8e93;margin-top:2px;}
+  .small .fill{flex:1;}
+  .line{display:flex;gap:5px;font-size:11px;line-height:1.3;margin-top:4px;}
+  .line .ic{flex:none;}
+  .good .ic{color:#2e7d32;} .bad .ic{color:#b0b0b0;} .bad{color:#8e8e93;}
+  /* medium 329x155 */
+  .medium{width:329px;height:155px;display:flex;gap:16px;align-items:center;}
+  .medium .col{display:flex;flex-direction:column;align-items:center;padding-right:4px;}
+  .medium .bigname{font-size:34px;font-weight:700;line-height:1;}
+  .medium .range{font-size:11px;color:#8e8e93;margin-top:6px;}
+  .divider{width:1px;align-self:stretch;background:#e5e5ea;margin:8px 0;}
+  .medium .body{flex:1;}
+  .medium .head{display:flex;gap:6px;align-items:baseline;margin-bottom:8px;}
+  .medium .mer{font-size:16px;font-weight:700;color:var(--accent);}
+  .medium .organ{font-size:13px;color:#8e8e93;}
+  .medium .line{font-size:13px;margin-top:6px;}
+  /* table */
+  table{border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;
+    box-shadow:0 4px 16px rgba(0,0,0,.08);font-size:13px;}
+  th,td{padding:9px 14px;text-align:left;border-bottom:1px solid #f0f0f0;}
+  th{background:#f7f5f1;font-weight:600;color:#666;font-size:12px;}
+  .cur{background:#eef3ff;}
+  .cur td:first-child{font-weight:700;}
+  .tmer{color:var(--accent);font-weight:600;}
+</style></head>
+<body>
+<h1>时辰经络养生 · 预览(此刻 2026-07-18 09:36 → 巳时 脾经)</h1>
+
+<div class="row">
+  <div>
+    <div class="widget small">
+      <div class="top"><span class="name">巳时</span><span class="mer">脾经</span></div>
+      <div class="range">09:00 – 11:00</div>
+      <div class="fill"></div>
+      <div class="line good"><span class="ic">✓</span><span>专注工作、适量饮水</span></div>
+      <div class="line bad"><span class="ic">✕</span><span>久坐、思虑过度、吃甜腻</span></div>
+    </div>
+    <div class="cap">Small (桌面小尺寸)</div>
+  </div>
+
+  <div>
+    <div class="widget medium">
+      <div class="col"><div class="bigname">巳时</div><div class="range">09:00 – 11:00</div></div>
+      <div class="divider"></div>
+      <div class="body">
+        <div class="head"><span class="mer">脾经</span><span class="organ">· 脾</span></div>
+        <div class="line good"><span class="ic" style="color:#2e7d32">✓</span><span>专注工作、适量饮水</span></div>
+        <div class="line bad"><span class="ic">✕</span><span>久坐、思虑过度、吃甜腻</span></div>
+      </div>
+    </div>
+    <div class="cap">Medium (桌面中尺寸)</div>
+  </div>
+</div>
+
+<table>
+  <tr><th>时辰</th><th>时间</th><th>经络</th><th>脏腑</th><th>宜</th><th>忌</th></tr>
+  <tr><td>子时</td><td>23:00–01:00</td><td class="tmer">胆经</td><td>胆</td><td>上床入睡,养胆气</td><td>熬夜、进食</td></tr>
+  <tr><td>丑时</td><td>01:00–03:00</td><td class="tmer">肝经</td><td>肝</td><td>熟睡养肝血、解毒</td><td>熬夜、生气、饮酒</td></tr>
+  <tr><td>寅时</td><td>03:00–05:00</td><td class="tmer">肺经</td><td>肺</td><td>保持深睡,肺朝百脉</td><td>受凉、剧烈活动</td></tr>
+  <tr><td>卯时</td><td>05:00–07:00</td><td class="tmer">大肠经</td><td>大肠</td><td>起床、排便、喝温水</td><td>赖床、憋便</td></tr>
+  <tr><td>辰时</td><td>07:00–09:00</td><td class="tmer">胃经</td><td>胃</td><td>吃营养早餐</td><td>不吃早餐、吃太凉</td></tr>
+  <tr class="cur"><td>巳时 ◀ 现在</td><td>09:00–11:00</td><td class="tmer">脾经</td><td>脾</td><td>专注工作、适量饮水</td><td>久坐、思虑过度、吃甜腻</td></tr>
+  <tr><td>午时</td><td>11:00–13:00</td><td class="tmer">心经</td><td>心</td><td>午餐后小憩养心</td><td>剧烈运动、暴饮暴食</td></tr>
+  <tr><td>未时</td><td>13:00–15:00</td><td class="tmer">小肠经</td><td>小肠</td><td>午后饮水,助吸收</td><td>午餐过晚、过饱</td></tr>
+  <tr><td>申时</td><td>15:00–17:00</td><td class="tmer">膀胱经</td><td>膀胱</td><td>多喝水、学习工作</td><td>憋尿</td></tr>
+  <tr><td>酉时</td><td>17:00–19:00</td><td class="tmer">肾经</td><td>肾</td><td>晚餐清淡、适度休息</td><td>过劳、纵欲</td></tr>
+  <tr><td>戌时</td><td>19:00–21:00</td><td class="tmer">心包经</td><td>心包</td><td>散步、放松、家人相处</td><td>大喜大怒、久视屏幕</td></tr>
+  <tr><td>亥时</td><td>21:00–23:00</td><td class="tmer">三焦经</td><td>三焦</td><td>静心、准备入睡</td><td>兴奋、宵夜、剧烈运动</td></tr>
+</table>
+</body></html>
