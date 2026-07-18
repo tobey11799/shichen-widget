@@ -1,0 +1,59 @@
+name: ShichenWidget
+options:
+  bundleIdPrefix: com.example.shichen
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+
+targets:
+  # 宿主 App
+  ShichenApp:
+    type: application
+    platform: macOS
+    sources:
+      - ShichenApp
+      - Shared
+    info:
+      path: ShichenApp/Info.plist
+      properties:
+        CFBundleDisplayName: 时辰经络养生
+        LSMinimumSystemVersion: "14.0"
+    entitlements:
+      path: ShichenApp/ShichenApp.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.files.user-selected.read-only: true
+    dependencies:
+      - target: ShichenWidgetExtension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.shichen.app
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        CODE_SIGN_STYLE: Automatic
+        ENABLE_HARDENED_RUNTIME: true
+
+  # Widget 扩展
+  ShichenWidgetExtension:
+    type: app-extension
+    platform: macOS
+    sources:
+      - ShichenWidget
+      - Shared
+    info:
+      path: ShichenWidget/Info.plist
+      properties:
+        CFBundleDisplayName: 时辰经络养生
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: ShichenWidget/ShichenWidget.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.shichen.app.widget
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        CODE_SIGN_STYLE: Automatic
+        ENABLE_HARDENED_RUNTIME: true
