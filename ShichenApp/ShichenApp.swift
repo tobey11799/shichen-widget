@@ -1,12 +1,23 @@
 import SwiftUI
+import AppKit
 
 @main
 struct ShichenApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+
     var body: some Scene {
         WindowGroup {
             ContentView()
         }
         .defaultSize(width: 380, height: 460)
+    }
+}
+
+final class AppDelegate: NSObject, NSApplicationDelegate {
+    private let statusController = ShichenStatusController()
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        statusController.start()
     }
 }
 

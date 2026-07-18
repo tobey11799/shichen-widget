@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8">
+<title>Dock / 歌词式展示 方案预览</title>
+<style>
+  :root{--accent:#8c2926;}
+  *{box-sizing:border-box;}
+  body{margin:0;padding:32px;background:#d8d3c8;
+    font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;color:#1c1c1e;}
+  h1{font-size:18px;margin:0 0 6px;}
+  .sub{color:#666;font-size:13px;margin-bottom:28px;}
+  .opt{background:#fff;border-radius:16px;padding:20px 22px;margin-bottom:22px;
+    box-shadow:0 6px 20px rgba(0,0,0,.10);}
+  .opt h2{font-size:15px;margin:0 0 4px;}
+  .opt .desc{font-size:12.5px;color:#777;margin:0 0 16px;line-height:1.5;}
+  .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;
+    background:#f0ece3;color:#8a7f6a;margin-left:8px;vertical-align:middle;}
+  .stage{background:linear-gradient(180deg,#3a5a8c,#6d8fbf);border-radius:12px;
+    padding:0;overflow:hidden;position:relative;height:210px;}
+  .wallpaper{position:absolute;inset:0;background:
+    radial-gradient(circle at 30% 30%,#7fa3d6,#345084);}
+  /* ---- menu bar ---- */
+  .menubar{position:absolute;top:0;left:0;right:0;height:26px;background:rgba(255,255,255,.75);
+    backdrop-filter:blur(10px);display:flex;align-items:center;padding:0 12px;font-size:12px;
+    color:#222;gap:16px;}
+  .menubar .apple{font-weight:700;}
+  .menubar .spacer{flex:1;}
+  .menubar .lyric{max-width:230px;overflow:hidden;white-space:nowrap;}
+  .menubar .lyric span{display:inline-block;padding-left:100%;
+    animation:scroll 9s linear infinite;color:var(--accent);font-weight:600;}
+  @keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
+  .menubar .clock{font-variant-numeric:tabular-nums;}
+  /* ---- dock ---- */
+  .dock{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+    height:64px;background:rgba(255,255,255,.35);backdrop-filter:blur(14px);
+    border-radius:16px;display:flex;align-items:flex-end;gap:10px;padding:6px 12px;
+    border:1px solid rgba(255,255,255,.5);}
+  .dock .icon{width:52px;height:52px;border-radius:12px;background:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:22px;
+    box-shadow:0 2px 6px rgba(0,0,0,.2);}
+  .i-safari{background:linear-gradient(#4aa3ff,#0066cc);color:#fff;}
+  .i-mail{background:linear-gradient(#7ac6ff,#2b8fff);color:#fff;}
+  .i-music{background:linear-gradient(#ff5b6a,#e0263a);color:#fff;}
+  /* our dock icon variants */
+  .i-ours{background:linear-gradient(#f3ede0,#e7dcc4);position:relative;
+    flex-direction:column;color:#3a2a1a;font-weight:700;line-height:1.05;}
+  .i-ours .sc{font-size:20px;}
+  .i-ours .me{font-size:10px;color:var(--accent);}
+  .badge{position:absolute;top:-6px;right:-6px;background:#e0263a;color:#fff;
+    font-size:9px;font-weight:700;border-radius:9px;padding:2px 6px;white-space:nowrap;}
+  /* ---- floating strip ---- */
+  .float{position:absolute;top:70px;left:50%;transform:translateX(-50%);
+    background:rgba(20,20,25,.6);backdrop-filter:blur(12px);color:#fff;
+    padding:8px 18px;border-radius:18px;font-size:14px;display:flex;gap:8px;align-items:center;
+    box-shadow:0 6px 18px rgba(0,0,0,.35);}
+  .float .sc{color:#ffd27f;font-weight:700;}
+  .float .mer{color:#ff9e9e;font-weight:600;}
+  .note{font-size:12px;color:#888;margin-top:12px;}
+  .good{color:#2e7d32;} .pill{color:var(--accent);font-weight:600;}
+</style></head>
+<body>
+<h1>Dock / 歌词式展示 · 四种方案对比</h1>
+<div class="sub">内容取此刻真实时辰:<b>巳时 · 脾经(脾)</b>,宜 专注工作、适量饮水。下面每块蓝色区是模拟的 macOS 桌面。</div>
+
+<!-- A -->
+<div class="opt">
+  <h2>方案 A:画在 Dock 图标上 <span class="tag">最贴"Dock"字面</span></h2>
+  <p class="desc">用 NSDockTile 自绘,把「时辰·经络」直接渲染进 Dock 图标。图标只有 ~128px,只能放极短的字。右上角还可挂一个红色 badge 放"宜"。</p>
+  <div class="stage"><div class="wallpaper"></div>
+    <div class="dock">
+      <div class="icon i-safari">🧭</div>
+      <div class="icon i-mail">✉️</div>
+      <div class="icon i-ours"><span class="sc">巳</span><span class="me">脾经</span>
+        <span class="badge">宜 饮水</span></div>
+      <div class="icon i-music">🎵</div>
+    </div>
+  </div>
+  <p class="note">✅ 不占额外空间,原生感强　❌ 字数极有限,一整句养生提示放不下</p>
+</div>
+
+<!-- B -->
+<div class="opt">
+  <h2>方案 B:菜单栏跑马灯 <span class="tag">最像网易云歌词</span></h2>
+  <p class="desc">做成菜单栏 app,在顶部状态栏显示一整句养生提示,过长自动横向滚动。空间比 Dock 图标大得多。</p>
+  <div class="stage"><div class="wallpaper"></div>
+    <div class="menubar"><span class="apple"></span><span>Finder</span><span>文件</span>
+      <span class="spacer"></span>
+      <span class="lyric"><span>巳时·脾经 宜:专注工作、适量饮水　忌:久坐、思虑过度</span></span>
+      <span>🔋</span><span>🔊</span><span class="clock">周六 9:41</span></div>
+    <div class="dock">
+      <div class="icon i-safari">🧭</div><div class="icon i-mail">✉️</div>
+      <div class="icon i-music">🎵</div></div>
+  </div>
+  <p class="note">✅ 能显示完整一句、可滚动　❌ 需要做成菜单栏常驻 app(不是 Dock)</p>
+</div>
+
+<!-- C -->
+<div class="opt">
+  <h2>方案 C:桌面悬浮条 <span class="tag">最像"歌词浮层"</span></h2>
+  <p class="desc">一条常驻桌面、置顶半透明的文字条,可拖动位置。视觉最接近桌面歌词。</p>
+  <div class="stage"><div class="wallpaper"></div>
+    <div class="float"><span class="sc">巳时</span><span class="mer">脾经</span>
+      <span>· 宜 专注工作、适量饮水</span></div>
+    <div class="dock"><div class="icon i-safari">🧭</div><div class="icon i-music">🎵</div></div>
+  </div>
+  <p class="note">✅ 最灵动、最像歌词　❌ 窗口层级/拖动/多屏处理最复杂,代码量最大</p>
+</div>
+
+<!-- D -->
+<div class="opt">
+  <h2>方案 D:Dock 图标 + 菜单栏 组合 <span class="tag">推荐</span></h2>
+  <p class="desc">Dock 图标显示极简「巳·脾经」一眼可辨;菜单栏显示完整一句养生提示。两处互补。</p>
+  <div class="stage"><div class="wallpaper"></div>
+    <div class="menubar"><span class="apple"></span><span>Finder</span>
+      <span class="spacer"></span>
+      <span class="lyric"><span>巳时·脾经 宜:专注工作、适量饮水　忌:久坐、思虑过度</span></span>
+      <span class="clock">9:41</span></div>
+    <div class="dock">
+      <div class="icon i-safari">🧭</div><div class="icon i-mail">✉️</div>
+      <div class="icon i-ours"><span class="sc">巳</span><span class="me">脾经</span></div>
+      <div class="icon i-music">🎵</div></div>
+  </div>
+  <p class="note">✅ 一眼可辨 + 完整信息兼得　❌ 工作量 = A + B</p>
+</div>
+
+</body></html>

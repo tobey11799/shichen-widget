@@ -5,6 +5,8 @@ DerivedData/
 .build/
 
 # XcodeGen 生成物由 project.yml 定义,不入库
+**/Info.plist
+**/*.entitlements
 
 # macOS
 .DS_Store
