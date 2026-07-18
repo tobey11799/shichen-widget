@@ -1,0 +1,5 @@
+// 复制为 Signing.xcconfig 并填入你自己的 Apple 开发者 Team ID:
+//   cp Signing.xcconfig.example Signing.xcconfig
+// Team ID 在 Xcode → Signing & Capabilities 的 Team 下拉,或 developer.apple.com 账户里查。
+// 留空则由 Xcode 按登录账号自动选。
+DEVELOPMENT_TEAM =

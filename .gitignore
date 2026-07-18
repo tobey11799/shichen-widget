@@ -14,3 +14,6 @@ DerivedData/
 # Xcode user state
 xcuserdata/
 *.xcuserstate
+
+# 本地签名(个人 Team,不入库)
+Signing.xcconfig
