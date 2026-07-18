@@ -5,18 +5,23 @@
 - 纯本地、无网络、无后端、不收集任何数据
 - 数据即一张固定的十二时辰经络映射表(`Shared/MeridianData.swift`)
 - 每逢时辰交替(奇数整点)自动刷新
+- 运行 App 后,**Dock 图标**显示当前「时辰·经络」,**菜单栏**静态显示当前时辰与养生宜忌(不滚动,不打扰)
 
 ## 目录结构
 
 ```
 ShichenWidget/
-├── project.yml              # XcodeGen 工程定义(一键生成 .xcodeproj)
+├── project.yml                       # XcodeGen 工程定义(一键生成 .xcodeproj)
 ├── Shared/
-│   └── MeridianData.swift   # 十二时辰 → 经络/脏腑/宜忌 数据 + 时辰计算
+│   └── MeridianData.swift            # 十二时辰 → 经络/脏腑/宜忌 数据 + 时辰计算
 ├── ShichenApp/
-│   └── ShichenApp.swift     # 宿主 App(展示全表,widget 必须依附于 App)
-└── ShichenWidget/
-    └── ShichenWidget.swift  # WidgetKit 小组件(Small / Medium)
+│   ├── ShichenApp.swift              # 宿主 App + AppDelegate
+│   └── ShichenStatusController.swift # Dock 图标自绘 + 菜单栏静态展示
+├── ShichenWidget/
+│   └── ShichenWidget.swift           # WidgetKit 小组件(Small / Medium)
+└── docs/
+    ├── preview.html                  # widget 外观静态预览
+    └── dock-options.html             # Dock/菜单栏 展示方案对比
 ```
 
 ## 构建步骤
