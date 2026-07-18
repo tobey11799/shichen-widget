@@ -65,22 +65,26 @@ struct ShichenWidgetEntryView: View {
         let s = entry.shichen
         return HStack(spacing: 14) {
             VStack(spacing: 2) {
-                Text(s.name).font(.system(size: 34, weight: .bold))
-                Text(s.range).font(.caption2).foregroundStyle(.secondary)
+                Text(s.name).font(.system(size: 40, weight: .bold))
+                Text(s.range).font(.footnote).foregroundStyle(.secondary)
             }
             Divider()
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 6) {
-                    Text(s.meridian).font(.title3).bold().foregroundStyle(accent)
-                    Text("· \(s.organ)").font(.body).foregroundStyle(.secondary)
+                    Text(s.meridian).font(.system(size: 24, weight: .bold)).foregroundStyle(accent)
+                    Text("· \(s.organ)").font(.title3).foregroundStyle(.secondary)
                 }
-                Label(s.good, systemImage: "checkmark.circle").font(.callout).lineLimit(2)
-                Label(s.bad, systemImage: "xmark.circle").font(.callout)
-                    .foregroundStyle(.secondary).lineLimit(2)
+                Spacer(minLength: 0)
+                Label(s.good, systemImage: "checkmark.circle")
+                    .font(.system(size: 17, weight: .medium)).lineLimit(2)
+                Label(s.bad, systemImage: "xmark.circle")
+                    .font(.system(size: 17)).foregroundStyle(.secondary).lineLimit(2)
+                Spacer(minLength: 0)
             }
+            .frame(maxHeight: .infinity)
             Spacer(minLength: 0)
         }
-        .padding(4)
+        .padding(6)
     }
 }
 
