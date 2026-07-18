@@ -91,6 +91,7 @@ struct ShichenWidgetEntryView: View {
             Text(text)
                 .font(.system(size: 16))
                 .lineLimit(2)
+                .minimumScaleFactor(0.7)
                 .multilineTextAlignment(.leading)
                 .fixedSize(horizontal: false, vertical: true)
         }
