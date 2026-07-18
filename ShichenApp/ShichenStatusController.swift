@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import ServiceManagement
+import WidgetKit
 
 /// 菜单栏标题的详略程度。
 enum TitleStyle: Int, CaseIterable {
@@ -81,6 +82,9 @@ final class ShichenStatusController: NSObject, NSWindowDelegate {
         dockTileView.shichen = s
         NSApp.dockTile.contentView = dockTileView
         NSApp.dockTile.display()
+
+        // app 抓到时辰变化时,顺带让 widget 时间线重建,保持同步。
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     // MARK: - 菜单
