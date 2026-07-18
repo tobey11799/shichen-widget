@@ -138,7 +138,7 @@ final class ShichenStatusController: NSObject, NSWindowDelegate {
         let window = NSWindow(contentViewController: hosting)
         window.title = "时辰经络养生"
         window.styleMask = [.titled, .closable, .miniaturizable]
-        window.setContentSize(NSSize(width: 380, height: 460))
+        window.setContentSize(NSSize(width: 600, height: 680))
         window.isReleasedWhenClosed = false   // 关键:关闭后不释放,可重开
         window.delegate = self
         window.center()
