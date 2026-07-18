@@ -6,10 +6,8 @@ struct ShichenApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
     var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
-        .defaultSize(width: 380, height: 460)
+        // 不用 WindowGroup(会在启动时自动弹窗);面板由 AppKit 按需管理。
+        Settings { EmptyView() }
     }
 }
 
@@ -18,6 +16,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         statusController.start()
+    }
+
+    // 面板关闭后不退出 App(常驻菜单栏/Dock)。
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        false
     }
 }
 

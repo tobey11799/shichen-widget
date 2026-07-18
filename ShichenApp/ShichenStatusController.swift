@@ -1,10 +1,13 @@
 import AppKit
+import SwiftUI
+import ServiceManagement
 
-/// 负责菜单栏(静态,不滚动)与 Dock 图标的当前时辰展示。
-final class ShichenStatusController: NSObject {
+/// 负责菜单栏(静态,不滚动)、Dock 图标与面板窗口的当前时辰展示。
+final class ShichenStatusController: NSObject, NSWindowDelegate {
     private var statusItem: NSStatusItem!
     private let dockTileView = DockTileView()
     private var timer: Timer?
+    private var panel: NSWindow?
 
     func start() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -47,13 +50,20 @@ final class ShichenStatusController: NSObject {
         menu.addItem(header)
         menu.addItem(info("经络:\(s.meridian)　脏腑:\(s.organ)"))
         menu.addItem(.separator())
-        menu.addItem(info("宜　\(s.good)"))
-        menu.addItem(info("忌　\(s.bad)"))
+        menu.addItem(info("宜: \(s.good)"))
+        menu.addItem(info("忌: \(s.bad)"))
         menu.addItem(.separator())
 
         let open = NSMenuItem(title: "打开面板", action: #selector(openPanel), keyEquivalent: "")
         open.target = self
         menu.addItem(open)
+
+        let login = NSMenuItem(title: "开机时启动", action: #selector(toggleLaunchAtLogin), keyEquivalent: "")
+        login.target = self
+        login.state = launchAtLoginEnabled ? .on : .off
+        menu.addItem(login)
+
+        menu.addItem(.separator())
         menu.addItem(NSMenuItem(title: "退出",
                                 action: #selector(NSApplication.terminate(_:)),
                                 keyEquivalent: "q"))
@@ -66,9 +76,54 @@ final class ShichenStatusController: NSObject {
         return item
     }
 
+    // MARK: - 面板窗口(AppKit 自管,避免 SwiftUI WindowGroup 重开崩溃)
+
     @objc private func openPanel() {
         NSApp.activate(ignoringOtherApps: true)
-        NSApp.windows.first(where: { $0.canBecomeMain })?.makeKeyAndOrderFront(nil)
+
+        if let panel = panel {
+            panel.makeKeyAndOrderFront(nil)
+            return
+        }
+
+        let hosting = NSHostingController(rootView: ContentView())
+        let window = NSWindow(contentViewController: hosting)
+        window.title = "时辰经络养生"
+        window.styleMask = [.titled, .closable, .miniaturizable]
+        window.setContentSize(NSSize(width: 380, height: 460))
+        window.isReleasedWhenClosed = false   // 关键:关闭后不释放,可重开
+        window.delegate = self
+        window.center()
+        window.makeKeyAndOrderFront(nil)
+        panel = window
+    }
+
+    func windowWillClose(_ notification: Notification) {
+        // 窗口关闭即丢弃引用,下次重新创建一个干净的。
+        if (notification.object as? NSWindow) === panel {
+            panel = nil
+        }
+    }
+
+    // MARK: - 开机启动
+
+    private var launchAtLoginEnabled: Bool {
+        SMAppService.mainApp.status == .enabled
+    }
+
+    @objc private func toggleLaunchAtLogin() {
+        do {
+            if launchAtLoginEnabled {
+                try SMAppService.mainApp.unregister()
+            } else {
+                try SMAppService.mainApp.register()
+            }
+        } catch {
+            let alert = NSAlert()
+            alert.messageText = "设置开机启动失败"
+            alert.informativeText = error.localizedDescription
+            alert.runModal()
+        }
     }
 }
 
