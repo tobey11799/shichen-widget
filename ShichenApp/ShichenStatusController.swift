@@ -92,13 +92,11 @@ final class ShichenStatusController: NSObject, NSWindowDelegate {
     private func buildMenu(for s: Shichen) -> NSMenu {
         let menu = NSMenu()
 
-        let header = NSMenuItem(title: "\(s.name)  \(s.range)", action: nil, keyEquivalent: "")
-        header.isEnabled = false
-        menu.addItem(header)
-        menu.addItem(info("经络:\(s.meridian)　脏腑:\(s.organ)"))
+        // 当前时辰 + 下一个时辰,各一段详情。
+        addSection(to: menu, label: "当前", s: s)
         menu.addItem(.separator())
-        menu.addItem(info("宜: \(s.good)"))
-        menu.addItem(info("忌: \(s.bad)"))
+        let next = MeridianData.current(at: MeridianData.nextBoundary())
+        addSection(to: menu, label: "下一个", s: next)
         menu.addItem(.separator())
 
         let open = NSMenuItem(title: "打开面板", action: #selector(openPanel), keyEquivalent: "")
@@ -136,6 +134,14 @@ final class ShichenStatusController: NSObject, NSWindowDelegate {
         let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
         item.isEnabled = false
         return item
+    }
+
+    /// 往菜单追加一段时辰详情(标签 + 时辰/时段 + 经络/脏腑 + 宜/忌)。
+    private func addSection(to menu: NSMenu, label: String, s: Shichen) {
+        menu.addItem(info("【\(label)】\(s.name)　\(s.range)"))
+        menu.addItem(info("经络:\(s.meridian)　脏腑:\(s.organ)"))
+        menu.addItem(info("宜: \(s.good)"))
+        menu.addItem(info("忌: \(s.bad)"))
     }
 
     // MARK: - 面板窗口(AppKit 自管,避免 SwiftUI WindowGroup 重开崩溃)
