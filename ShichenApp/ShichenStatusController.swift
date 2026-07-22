@@ -91,6 +91,7 @@ final class ShichenStatusController: NSObject, NSWindowDelegate {
 
     private func buildMenu(for s: Shichen) -> NSMenu {
         let menu = NSMenu()
+        menu.autoenablesItems = false   // 手动控制启用态:当前段 enabled(深),上/下段 disabled(灰)
 
         // 上一个 + 当前 + 下一个 时辰,各一段详情;当前更醒目(深色)。
         let prev = MeridianData.all[(s.id + 11) % 12]
@@ -104,10 +105,12 @@ final class ShichenStatusController: NSObject, NSWindowDelegate {
 
         let open = NSMenuItem(title: "打开面板", action: #selector(openPanel), keyEquivalent: "")
         open.target = self
+        open.isEnabled = true
         menu.addItem(open)
 
         // 菜单栏显示详略,可配置。
         let styleItem = NSMenuItem(title: "菜单栏显示", action: nil, keyEquivalent: "")
+        styleItem.isEnabled = true
         let styleMenu = NSMenu()
         for style in TitleStyle.allCases {
             let item = NSMenuItem(title: style.label,
@@ -123,25 +126,27 @@ final class ShichenStatusController: NSObject, NSWindowDelegate {
         let login = NSMenuItem(title: launchAtLoginEnabled ? "取消开机启动" : "开机时启动",
                                action: #selector(toggleLaunchAtLogin), keyEquivalent: "")
         login.target = self
+        login.isEnabled = true
         login.state = launchAtLoginEnabled ? .on : .off
         menu.addItem(login)
 
         menu.addItem(.separator())
-        menu.addItem(NSMenuItem(title: "退出",
-                                action: #selector(NSApplication.terminate(_:)),
-                                keyEquivalent: "q"))
+        let quit = NSMenuItem(title: "退出",
+                              action: #selector(NSApplication.terminate(_:)),
+                              keyEquivalent: "q")
+        quit.isEnabled = true
+        menu.addItem(quit)
         return menu
     }
 
-    /// 一行信息;strong=当前时辰用深色(labelColor),否则用浅灰(tertiary),bold 用于小节标题。
+    /// 一行信息。strong=当前时辰:enabled(系统全强度深色);否则 disabled(系统压暗成灰)。bold 用于小节标题。
     private func line(_ title: String, strong: Bool, bold: Bool) -> NSMenuItem {
         let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
-        item.isEnabled = false
+        item.isEnabled = strong
         let base = NSFont.menuFont(ofSize: 0)
         let font = bold ? NSFontManager.shared.convert(base, toHaveTrait: .boldFontMask) : base
-        let color: NSColor = strong ? .labelColor : .tertiaryLabelColor
         item.attributedTitle = NSAttributedString(string: title,
-                                                  attributes: [.font: font, .foregroundColor: color])
+                                                  attributes: [.font: font, .foregroundColor: NSColor.labelColor])
         return item
     }
 
