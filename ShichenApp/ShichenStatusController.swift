@@ -92,11 +92,14 @@ final class ShichenStatusController: NSObject, NSWindowDelegate {
     private func buildMenu(for s: Shichen) -> NSMenu {
         let menu = NSMenu()
 
-        // 当前时辰 + 下一个时辰,各一段详情。
-        addSection(to: menu, label: "当前", s: s)
+        // 上一个 + 当前 + 下一个 时辰,各一段详情;当前更醒目(深色)。
+        let prev = MeridianData.all[(s.id + 11) % 12]
+        let next = MeridianData.all[(s.id + 1) % 12]
+        addSection(to: menu, label: "上一个", s: prev, strong: false)
         menu.addItem(.separator())
-        let next = MeridianData.current(at: MeridianData.nextBoundary())
-        addSection(to: menu, label: "下一个", s: next)
+        addSection(to: menu, label: "当前", s: s, strong: true)
+        menu.addItem(.separator())
+        addSection(to: menu, label: "下一个", s: next, strong: false)
         menu.addItem(.separator())
 
         let open = NSMenuItem(title: "打开面板", action: #selector(openPanel), keyEquivalent: "")
@@ -130,18 +133,24 @@ final class ShichenStatusController: NSObject, NSWindowDelegate {
         return menu
     }
 
-    private func info(_ title: String) -> NSMenuItem {
+    /// 一行信息;strong=当前时辰用深色(labelColor),否则用浅灰(tertiary),bold 用于小节标题。
+    private func line(_ title: String, strong: Bool, bold: Bool) -> NSMenuItem {
         let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
         item.isEnabled = false
+        let base = NSFont.menuFont(ofSize: 0)
+        let font = bold ? NSFontManager.shared.convert(base, toHaveTrait: .boldFontMask) : base
+        let color: NSColor = strong ? .labelColor : .tertiaryLabelColor
+        item.attributedTitle = NSAttributedString(string: title,
+                                                  attributes: [.font: font, .foregroundColor: color])
         return item
     }
 
     /// 往菜单追加一段时辰详情(标签 + 时辰/时段 + 经络/脏腑 + 宜/忌)。
-    private func addSection(to menu: NSMenu, label: String, s: Shichen) {
-        menu.addItem(info("【\(label)】\(s.name)　\(s.range)"))
-        menu.addItem(info("经络:\(s.meridian)　脏腑:\(s.organ)"))
-        menu.addItem(info("宜: \(s.good)"))
-        menu.addItem(info("忌: \(s.bad)"))
+    private func addSection(to menu: NSMenu, label: String, s: Shichen, strong: Bool) {
+        menu.addItem(line("【\(label)】\(s.name)　\(s.range)", strong: strong, bold: true))
+        menu.addItem(line("经络:\(s.meridian)　脏腑:\(s.organ)", strong: strong, bold: false))
+        menu.addItem(line("宜: \(s.good)", strong: strong, bold: false))
+        menu.addItem(line("忌: \(s.bad)", strong: strong, bold: false))
     }
 
     // MARK: - 面板窗口(AppKit 自管,避免 SwiftUI WindowGroup 重开崩溃)
